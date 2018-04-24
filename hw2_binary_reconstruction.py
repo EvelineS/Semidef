@@ -443,14 +443,14 @@ def extract_sub_images(image, sub_image_size, overlap):
                 yu = y_dim
                 append_sub_image(xl, xu, yl, yu, i, j)
                 break
-            yl = yu - p - 1
+            yl = yu - 2*p
             yu = yl + s
             j += 1
 
         if done or xu == x_dim:
             break
 
-        xl = xu - p - 1
+        xl = xu - 2*p
         xu = xl + s
 
         if xu > x_dim:
@@ -515,66 +515,12 @@ def merge_subimages(sub_images, original_shape):
     return merged
 
 
-def stitch_subimages(sub_images):
-
-    return None
-    
-    full_size = sub_images[0][1].shape
-    truncated_size = sub_images[-1][1].shape
-    
-    last_sub_image_positon = sub_images[-1][0]
-    
-    x_dim = (last_sub_image_positon[0])*(full_size[0] - overlap) + truncated_size[0]
-    y_dim = (last_sub_image_positon[1])*(full_size[1] - overlap) + truncated_size[1]
-    
-    stitched_image = np.zeros((x_dim, y_dim))
-    
- 
-    for coord, sub_image in sub_images:
-        x = coord[0]
-        y = coord[1]
-        
-        lower_x = x*(full_size[0] - overlap)
-        lower_y = y*(full_size[1] - overlap)
-        
-        if sub_image.shape[0] == full_size[0]:
-            delta_x = full_size[0] - overlap
-        else:
-            delta_x = truncated_size[0]
-            
-        if sub_image.shape[1] == full_size[1]:
-            delta_y = full_size[1] - overlap
-        else:
-            delta_y = truncated_size[1]   
-               
-        stitched_image[lower_x:(lower_x + delta_x), lower_y:(lower_y+delta_y)] = sub_image[0:delta_x,0:delta_y]
-    
-    
-    
-    #print(sub_images)
-    print(full_size)
-    print(truncated_size)
-    print(last_sub_image_positon)
-    print(stitched_image.shape)
-    return stitched_image
-
-
 def segmented_reconstructions(image, lambda_reg, r, sub_image_size, overlap,
                               problem_prefix,
                               solution_prefix,
                               rounding_iterations):
     
     sub_images = extract_sub_images(image, sub_image_size, overlap)
-    
-    
-    
-    # A sanity check to confirm that splitting to subimages and stitching them together gives
-    # back the orignal image.
-    restitched_image = stitch_subimages(sub_images, overlap)
-    assert np.allclose(image, restitched_image)
-
-    #plt.imshow(restitched_image, cmap='gray')
-    #plt.show()
     
     reconstructed_images = []
     for coord, sub_image in sub_images:
