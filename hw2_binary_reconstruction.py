@@ -334,6 +334,9 @@ def extract_sub_images(image, sub_image_size, overlap):
         # Extract usable pixels from subimage.
         # Defined by a rectangle spanned by two points (x0,y0), (x1,y1)
         
+
+        # If a subimage is on the border on the image we may 
+        
         # Upper Left Courner
         if xl == 0 and yl == 0:
             print("ULC")
@@ -342,7 +345,6 @@ def extract_sub_images(image, sub_image_size, overlap):
 
             x1 = s - p
             y1 = s - p
-
         # Upper Border            
         elif xl == 0 and yl != 0 and yu != y_dim:
             print("UB")
@@ -359,16 +361,7 @@ def extract_sub_images(image, sub_image_size, overlap):
 
             x1 = s - p
             y1 = s
-
-        # Right border
-        elif yu == y_dim and xl != 0 and xu != x_dim:
-            print("RB")
-            x0 = p
-            y0 = p
-
-            x1 = s - p
-            y1 = s
-        
+            #import ipdb; ipdb.set_trace()
         # Left Border
         elif xl != 0 and xu != x_dim and yl == 0:
             print("LB")
@@ -386,6 +379,14 @@ def extract_sub_images(image, sub_image_size, overlap):
 
             x1 = s - p
             y1 = s - p
+        # Right border
+        elif yu == y_dim and xl != 0 and xu != x_dim:
+            print("RB")
+            x0 = p
+            y0 = p
+
+            x1 = s - p
+            y1 = s
         # Lower border
         elif xu == x_dim and yl != 0 and yu != y_dim:
             print("LowB")
@@ -420,6 +421,7 @@ def extract_sub_images(image, sub_image_size, overlap):
         sub_image = image[xl:xu, yl:yu]
         print("Usable part")
         print(sub_image[x0:x1, y0:y1])
+        assert(y1 - y0 > 0 and x1 - x0 > 0)
         sub_images.append((sub_image, (i, j), usable_rect))
 
     # Lower and and upper bounds for subimages
@@ -438,7 +440,6 @@ def extract_sub_images(image, sub_image_size, overlap):
                 append_sub_image(xl, xu, yl, yu, i, j)
                 break
             else:
-                yl = y_dim - s
                 yu = y_dim
                 append_sub_image(xl, xu, yl, yu, i, j)
                 break
@@ -453,7 +454,7 @@ def extract_sub_images(image, sub_image_size, overlap):
         xu = xl + s
 
         if xu > x_dim:
-            xl = x_dim - s
+            print("max, xl = {}".format(xl))
             xu = x_dim
             done = True
 
@@ -485,9 +486,6 @@ def merge_subimages(sub_images, original_shape):
             if image_row is not None:
                 print("Appending row with shape {}".format(image_row.shape))
                 print(image_row)
-
-                
-                
                 rows.append(image_row)
             # Reset image_row to create next row
             image_row = None
