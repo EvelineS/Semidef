@@ -280,72 +280,74 @@ def interval_minimum(p, a, b, filename):
 
     - filename -- name of file for SDPA output.
 
-    outfile = open('filename.sdpa', 'w')
+    """
+
+    outfile = open(filename, 'w')
 
     degree = p.degree(x)
     NoOfVariables = degree + 1
     NoOfBlocks = 3
 
-    outfile.write('%d %n' % (NoOfVariables)) #No. variables
-    outfile.write('%d %n' % (NoOfBlocks)) #No. blocks
+    outfile.write('%d \n' % (NoOfVariables)) #No. variables
+    outfile.write('%d \n' % (NoOfBlocks)) #No. blocks
 
     if degree%2==0:
-        even = true
+        even = True
         d = degree/2
-        outfile.write('%d %d -2 %n' % (d+1 d)) #Blocksizes
+        outfile.write('%d %d -2 \n' % (d+1, d)) #Blocksizes
     else:
-        even = false
+        even = False
         d = (degree-1)/2
-        outfile.write('%d %d -2 %n' % (d+1 d+1)) #Blocksizes
+        outfile.write('%d %d -2 \n' % (d+1, d+1)) #Blocksizes
 
     c = p.list()
     for coefficient in c:
         outfile.write('%d ' % coefficient)
-    outfile.write('%n') #coefficients of polynomial
+    outfile.write('\n') #coefficients of polynomial
 
-    outfile.write('0 3 1 1 1')
-    outfile.write('0 3 2 2 -1')
-    outfile.write('1 3 1 1 1')
-    outfile.write('1 3 2 2 -1') #Lambda variables for F0 and F1
+    outfile.write('0 3 1 1 1\n')
+    outfile.write('0 3 2 2 -1\n')
+    outfile.write('1 3 1 1 1\n')
+    outfile.write('1 3 2 2 -1\n') #Lambda variables for F0 and F1
 
 
     for s in [1..NoOfVariables]:
-        if even == true
+        if even == True:
             list = get_matrix_description(1,d+1,s,1,0)
             list.extend(get_matrix_description(2,d,s,-a*b,0))
             list.extend(get_matrix_description(2,d,s,a+b,1))
             list.extend(get_matrix_description(2,d,s,-1,2))
             for item in list:
-                outfile.write('%s%n' % item)
-        else
+                outfile.write('%s \n' % item)
+        else:
             list = get_matrix_description(1,d+1,s,-a,0)
             list.extend(get_matrix_description(1,d+1,s,1,1))
             list.extend(get_matrix_description(2,d+1,s,b,0))
             list.extend(get_matrix_description(2,d+1,s,-1,1))
             for item in list:
-                outfile.write('%s%n' % item)
+                outfile.write('%s \n' % item)
 
     outfile.close()
     pass
 
-def get_matrix_description(blockNo, blockSize, variableNo, value, shift)
-    list = []
+def get_matrix_description(blockNo, blockSize, variableNo, value, shift):
+    lst = []
     s = variableNo - shift
     if s<=blockSize:
         i = 1
         j = s
         while i<=j:
-            list.append('%d %d %d %d %d %n' % (variableNo blockNo i j value)
+            lst.append('%d %d %d %d %d' % (variableNo, blockNo, i, j, value))
             i = i + 1
             j = j - 1
     else:
         i = blockSize
         j = s - blockSize + 1
-        while i>=j
-            list.append('%d %d %d %d %d %n' % (variableNo blockNo i j value)
+        while i>=j:
+            lst.append('%d %d %d %d %d' % (variableNo, blockNo, i, j, value))
             i = i - 1
             j = j + 1
-    return list
+    return lst
 
 # Local variables:
 # mode: python
