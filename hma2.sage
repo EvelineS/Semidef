@@ -23,6 +23,7 @@ write a post on our ELO forum.
 import subprocess
 from scipy.misc import imread, imsave
 
+from binary_reconstruction import segmented_reconstructions
 
 def run_csdp(filename, solfile):
     """Run CSDP and return True on success, False on failure.
@@ -240,6 +241,21 @@ def sdp_filter(in_filename, out_filename, lda, r, block_size = 10,
     # interval [0, 255].
     A = matrix(RDF, imread(in_filename, flatten = True))
 
+    np_image  = A.numpy() / 255.0
+    
+    reconstructed = segmented_reconstructions(image=np_image,
+                                  lambda_reg=lda,
+                                  r=r,
+                                  sub_image_size=block_size,                          
+                                  overlap=border_size,
+                                  problem_prefix='subproblem_',
+                                  solution_prefix='subproblem_',
+                                  rounding_iterations=100)
+
+
+    
+
+    
     # Matrix with resulting binary image, to be filled by you.
     R = matrix(ZZ, A.nrows(), A.ncols())
     
@@ -261,7 +277,7 @@ def sdp_filter(in_filename, out_filename, lda, r, block_size = 10,
     ########
 
     # Save the final image.
-    imsave(out_filename, R)
+    imsave(out_filename, reconstructed)
 
 
 def interval_minimum(p, a, b, filename):
@@ -291,7 +307,7 @@ def interval_minimum(p, a, b, filename):
     outfile.write('%d \n' % (NoOfVariables)) #No. variables
     outfile.write('%d \n' % (NoOfBlocks)) #No. blocks
 
-    if degree%2==0:
+    if degree % 2==0:
         even = True
         d = degree/2
         outfile.write('%d %d -2 \n' % (d+1, d)) #Blocksizes
@@ -333,17 +349,17 @@ def interval_minimum(p, a, b, filename):
 def get_matrix_description(blockNo, blockSize, variableNo, value, shift):
     lst = []
     s = variableNo - shift
-    if s<=blockSize:
+    if s <= blockSize:
         i = 1
         j = s
-        while i<=j:
+        while i <= j:
             lst.append('%d %d %d %d %d' % (variableNo, blockNo, i, j, value))
             i = i + 1
             j = j - 1
     else:
         i = blockSize
         j = s - blockSize + 1
-        while i>=j:
+        while i >= j:
             lst.append('%d %d %d %d %d' % (variableNo, blockNo, i, j, value))
             i = i - 1
             j = j + 1
