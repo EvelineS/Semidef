@@ -26,12 +26,12 @@ class BinaryReconstruction(unittest.TestCase):
                         first_subimage = sub_images[0][0]
                         last_sub_image_true = image[x - sub_image_size:x, y - sub_image_size:y]
                         last_sub_image = sub_images[-1][0]
+                        print(image.shape)
 
                         self.assertTrue(np.allclose(first_subimage_true, first_subimage))
-
                         # Recreate orignal images from subimages
                         stitched_image = merge_subimages(sub_images, image.shape)
-                        # Make sure stitched image
+                        # Make sure orignal == stitched image
                         self.assertTrue(np.allclose(stitched_image, image))
             sys.stdout = old_stdout
 
