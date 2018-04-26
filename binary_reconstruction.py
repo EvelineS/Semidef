@@ -1,4 +1,10 @@
+# Homework  2 Semidefinte Optimization
+# Fredrik Gustafsson
+# Eveline de Swart
+
+
 import numpy as np
+
 
 import subprocess
 import sys

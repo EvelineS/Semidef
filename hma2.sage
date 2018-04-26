@@ -1,6 +1,9 @@
 """Sage file for Homework Assignment 2, SDP 2018, Mastermath.
 
-Testcomment
+
+# Homework  2 Semidefinte Optimization
+# Fredrik Gustafsson
+# Eveline de Swart
 
 Your program should be written in this file. You may write as many
 functions as you like, but you should follow the instructions in the
